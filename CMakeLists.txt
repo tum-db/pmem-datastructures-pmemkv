@@ -44,7 +44,7 @@ option(ENGINE_DRAM_VCMAP "enable testing dram_vcmap engine" OFF)
 # ----------------------------------------------------------------- #
 ## Set required and useful variables
 # ----------------------------------------------------------------- #
-set(CXX_STANDARD 11 CACHE STRING "C++ language standard")
+set(CXX_STANDARD 20 CACHE STRING "C++ language standard")
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD ${CXX_STANDARD})
@@ -96,6 +96,9 @@ set(SOURCE_FILES
 	src/out.h
 	src/iterator.h
 	src/iterator.cc
+	src/pibench/tree_api.h
+	src/pibench/PibenchWrapper.h
+	src/pibench/PibenchWrapper.cpp
 )
 # Add each engine source separately
 if(ENGINE_CMAP)
@@ -253,7 +256,7 @@ add_common_flag(-Wno-maybe-uninitialized)
 add_common_flag(-ggdb DEBUG)
 add_common_flag(-DDEBUG DEBUG)
 
-add_common_flag("-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2" RELEASE)
+#add_common_flag("-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2" RELEASE)
 
 # ----------------------------------------------------------------- #
 ## Setup environment, find packages,
@@ -297,8 +300,8 @@ endif()
 # ----------------------------------------------------------------- #
 add_library(pmemkv SHARED ${SOURCE_FILES})
 set_target_properties(pmemkv PROPERTIES SOVERSION 1)
-target_link_libraries(pmemkv PRIVATE
-	-Wl,--version-script=${PMEMKV_ROOT_DIR}/src/libpmemkv.map)
+#target_link_libraries(pmemkv PRIVATE
+#	-Wl,--version-script=${PMEMKV_ROOT_DIR}/src/libpmemkv.map)
 
 target_include_directories(pmemkv PRIVATE src/valgrind)
 # Enable libpmemobj-cpp valgrind annotations
@@ -448,7 +451,7 @@ configure_file(libpmemkv.pc.in libpmemkv.pc @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libpmemkv.pc
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
-set_target_properties(pmemkv PROPERTIES PUBLIC_HEADER "src/libpmemkv.h;src/libpmemkv.hpp")
+set_target_properties(pmemkv PROPERTIES PUBLIC_HEADER "src/libpmemkv.h;src/libpmemkv.hpp;src/pibench/PiBenchWrapper.h;src/pibench/tree_api.h")
 
 install(TARGETS pmemkv
 		PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
